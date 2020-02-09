@@ -9,4 +9,22 @@ print c
 if c .gt. 5 then print "c is greater than 5"
 if .not. c .lt. 5 then print "c is not less than 5"
 if c .gt. 5 .and. .not. c .gt. 10 then print "c is between 5 and 10"
+a = 3 .mul. c .add. 2
+print "a = "
+print a
+print
+print
+print "ENTER AN INTEGER NUMBER: "
+read b
+print
+print
+print "YOU ENTERED: "
+print b
+print
+print
+print
+if b .gt. 7 .and. b .le. 9 .or. b .eq. 8 then print "a = " 
+if b .gt. 7 .and. b .le. 9 .or. b .eq. 8 then print a 
+print
+print
 end.

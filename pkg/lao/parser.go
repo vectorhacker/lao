@@ -440,6 +440,11 @@ func (p parser) parseVariable() (Node, error) {
 
 func (p parser) parsePrintArguments(line int) (Node, error) {
 	current := p.tokenizer.Current()
+	if current.Line != line {
+		// Just print a new line
+		return nil, nil
+	}
+
 	switch current.Kind {
 	case KindKeyword:
 		if current.Line == line {
@@ -456,5 +461,5 @@ func (p parser) parsePrintArguments(line int) (Node, error) {
 		return p.parseVariable()
 	}
 
-	return nil, nil
+	return nil, fmt.Errorf("Invalid print statement argument at line %d column %d", current.Line, current.Column)
 }
