@@ -7,8 +7,8 @@ REM PRINT X
 REM PRINT "HOLA"
 REM PRINT 3.0
 REM READ W
-REM IF a .gt. 5 THEN PRINT
-IF .not. .not. a .gt. 5 .or. B .EQ. 3 THEN PRINT
+IF a .gt. 5 THEN PRINT
+IF .not. a .gt. 5 .or. B .EQ. 3 THEN PRINT
 REM a = 10
 REM a = 10 .add. 12 .div. 2 .sub. -12.22
 REM asquared = b .mul. b .add. c .mul. c

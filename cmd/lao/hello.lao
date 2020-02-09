@@ -1,0 +1,12 @@
+a = 10 .sub. 2 .mul. 4
+print "Hello, Lao"
+print a
+read b
+print b
+print "a + b = :"
+c = a .add. b
+print c
+if c .gt. 5 then print "c is greater than 5"
+if .not. c .lt. 5 then print "c is not less than 5"
+if c .gt. 5 .and. .not. c .gt. 10 then print "c is between 5 and 10"
+end.

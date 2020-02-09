@@ -20,9 +20,9 @@ type Node interface {
 }
 
 type AssignmentStatement struct {
-	Variable Variable
-	ArithmeticExpression
-	tokens []Token
+	Variable             Variable
+	ArithmeticExpression Node
+	tokens               []Token
 }
 
 func (a AssignmentStatement) Tokens() []Token {

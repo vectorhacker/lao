@@ -155,7 +155,7 @@ func (t *tokenizer) recognizeKeywordsAndIdentifier() {
 	for pos < t.buf.Len() {
 		ch := t.buf.Bytes()[pos]
 
-		if !unicode.IsLetter(rune(ch)) {
+		if !unicode.IsLetter(rune(ch)) && !unicode.IsNumber(rune(ch)) {
 			break
 		}
 

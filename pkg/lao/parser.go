@@ -10,12 +10,6 @@ type Parser interface {
 	Parse() ([]Node, error)
 }
 
-type Visitor interface {
-	Visit(Node)
-}
-
-type VisitorFunc func(Node)
-
 type parser struct {
 	tokenizer Tokenizer
 }
@@ -30,16 +24,8 @@ func (p parser) Parse() ([]Node, error) {
 
 	for {
 		switch p.tokenizer.Current().Kind {
-		case KindIdentifier:
-			node, err := p.parseAssignmentStatement()
-			if err != nil {
-				return nodes, err
-			}
-
-			nodes = append(nodes, node)
-			continue
-		case KindKeyword:
-			node, err := p.parseKeywordStatement()
+		case KindIdentifier, KindKeyword:
+			node, err := p.parseStatement()
 			if err != nil {
 				return nodes, err
 			}
@@ -49,9 +35,19 @@ func (p parser) Parse() ([]Node, error) {
 		case KindEnd:
 			return nodes, nil
 		}
-
 		p.tokenizer.Next()
 	}
+}
+
+func (p parser) parseStatement() (Node, error) {
+	switch p.tokenizer.Current().Kind {
+	case KindIdentifier:
+		return p.parseAssignmentStatement()
+	case KindKeyword:
+		return p.parseKeywordStatement()
+	}
+
+	return nil, fmt.Errorf("unable to parse statement")
 }
 
 func (p parser) parseAssignmentStatement() (Node, error) {
@@ -88,7 +84,7 @@ func (p parser) parseAssignmentStatement() (Node, error) {
 
 	return AssignmentStatement{
 		Variable:             variable.(Variable),
-		ArithmeticExpression: exp.(ArithmeticExpression),
+		ArithmeticExpression: exp,
 		tokens:               append(tokens, exp.Tokens()...),
 	}, nil
 }
@@ -227,25 +223,6 @@ func (p parser) parseNumber() (Node, error) {
 	return nil, fmt.Errorf("Not a number")
 }
 
-// exp is a hack
-func (p parser) exp() (Node, error) {
-	op := p.getBinaryOperator()
-	current := p.tokenizer.Current()
-	p.tokenizer.Next()
-	right, err := p.parseAtom(current.Line)
-	if err != nil {
-		return nil, err
-	}
-	if op == Not {
-		return p.parseExpresion(ConditionalExpression{
-			Right:    right,
-			Operator: op,
-			tokens:   append([]Token{current}, right.Tokens()...),
-		}, precedence[op])
-	}
-	return nil, fmt.Errorf("unxpected token %s at line: %d column: %d", current.Value, current.Line, current.Column)
-}
-
 func (p parser) parseAtom(line int) (Node, error) {
 
 	current := p.tokenizer.Current()
@@ -258,22 +235,23 @@ func (p parser) parseAtom(line int) (Node, error) {
 		return p.parseString()
 	case KindIdentifier:
 		return p.parseVariable()
-	case KindLogicalOperator:
-		return p.exp()
 	}
 	return nil, fmt.Errorf("unxpected token %s at line: %d column: %d", current.Value, current.Line, current.Column)
 }
 
-func (p parser) parseExpresion(left Node, prec int) (Node, error) {
+func (p parser) parseExpresion(
+	left Node,
+	prec int,
+) (Node, error) {
 	current := p.tokenizer.Current()
 	if current.Kind == KindLogicalOperator ||
 		current.Kind == KindRelationalOperator {
 
 		operator := p.getBinaryOperator()
 		nextPrec := precedence[operator]
-		if nextPrec > prec {
-			p.tokenizer.Next()
 
+		p.tokenizer.Next()
+		if nextPrec > prec {
 			atom, err := p.parseAtom(current.Line)
 			if err != nil {
 				return nil, err
@@ -283,14 +261,34 @@ func (p parser) parseExpresion(left Node, prec int) (Node, error) {
 				return nil, err
 			}
 
+			var leftTokens []Token
+			if left != nil {
+				leftTokens = left.Tokens()
+			}
+
+			// left to right logic
 			return p.parseExpresion(ConditionalExpression{
 				Left:     left,
 				Right:    right,
 				Operator: operator,
-				tokens:   append(append(left.Tokens(), current), right.Tokens()...),
+				tokens: append(
+					append(leftTokens, current),
+					right.Tokens()...,
+				),
 			}, prec)
+
 		}
 
+	} else if current.Kind == KindIdentifier ||
+		current.Kind == KindInteger ||
+		current.Kind == KindReal ||
+		current.Kind == KindString {
+		atom, err := p.parseAtom(current.Line)
+		if err != nil {
+			return nil, err
+		}
+
+		return p.parseExpresion(atom, prec)
 	}
 
 	return left, nil
@@ -314,19 +312,13 @@ func (p parser) parseIfStatement() (Node, error) {
 	current := p.tokenizer.Current()
 
 	var (
-		left,
 		condition,
 		statement Node
 	)
 	err := run(func() error {
 		var err error
-		p.tokenizer.Next() // eat if token
-
-		left, err = p.parseAtom(current.Line)
-		return err
-	}, func() error {
-		var err error
-		condition, err = p.parseExpresion(left, 0)
+		p.tokenizer.Next() // Eat  token
+		condition, err = p.parseExpresion(nil, 0)
 		return err
 	}, func() error {
 
@@ -342,15 +334,21 @@ func (p parser) parseIfStatement() (Node, error) {
 
 		var err error
 		// statement, err = p.parseAtom(current.Line, true)
-		statement, err = p.parseKeywordStatement()
+		statement, err = p.parseStatement()
 
 		return err
 	})
 	if err != nil {
 		return nil, err
 	}
+
+	cond, ok := condition.(ConditionalExpression)
+	if !ok {
+		return nil, fmt.Errorf("Invalid conditional expresion line %d", p.tokenizer.Current().Line)
+	}
+
 	return IfStatement{
-		Condition:     condition.(ConditionalExpression),
+		Condition:     cond,
 		ThenStatement: statement,
 		tokens:        append(append([]Token{current}, condition.Tokens()...), statement.Tokens()...),
 	}, nil
