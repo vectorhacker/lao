@@ -35,5 +35,5 @@ To be implemented
 ---------------
 
 1. Repl
-~~2. Goto statement~~
-~~3. Label statement~~
+2. ~~Goto statement~~
+3. ~~Label statement~~
