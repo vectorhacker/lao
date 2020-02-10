@@ -29,11 +29,11 @@ lao <path_to_program>
 Next steps
 ----------
 
-The Lao language is incomplete as a language. It is missing simple jumps and loops. It also lacks a repl.
+~~The Lao language is incomplete as a language. It is missing simple jumps and loops.~~ It also lacks a repl.
 
 To be implemented
 ---------------
 
 1. Repl
-2. Goto statement
-3. Label statement
+~~2. Goto statement~~
+~~3. Label statement~~
