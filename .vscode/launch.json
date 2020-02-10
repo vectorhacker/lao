@@ -10,8 +10,7 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}/cmd/lao",
-            "args": ["/Users/victormartinez/Projects/Lao/cmd/lao/sample.lao"],
-            "externalConsole": true
+            "args": ["${workspaceFolder}/examples/loop.lao"]
         }
     
     ]

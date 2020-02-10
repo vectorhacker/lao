@@ -35,4 +35,5 @@ if b .gt. 7 .and. b .le. 9 .or. b .eq. 8 then print "a = "
 if b .gt. 7 .and. b .le. 9 .or. b .eq. 8 then print a 
 print
 print
+if .not. b .gt. 7 .and. .not. b .le. 9 .or. .not. b .eq. 8 then print "not greater than 7"
 end.

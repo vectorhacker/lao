@@ -16,12 +16,16 @@ func NewInterpreter(out io.Writer) Interpreter {
 	return &interpreter{
 		out:     out,
 		symbols: map[string]interface{}{},
+		labels:  map[string]int{},
 	}
 }
 
 type interpreter struct {
 	symbols map[string]interface{}
+	labels  map[string]int
 	out     io.Writer
+	jump    bool
+	jumpTo  int
 }
 
 func (i *interpreter) evalauteArithmeticExpression(
@@ -456,6 +460,28 @@ func (i *interpreter) interpretRead(read ReadStatement) error {
 	return nil
 }
 
+func (i *interpreter) interpretGoto(gotostatement GotoStatement) error {
+	i.jump = true
+
+	address, ok := i.labels[gotostatement.Label]
+	if !ok {
+		return fmt.Errorf("Unable to to goto label %s doesn't exist", gotostatement.Label)
+	}
+	i.jumpTo = address - 1
+
+	return nil
+}
+
+func (i *interpreter) findLabels(statements []Node) error {
+	for _, statement := range statements {
+		switch s := statement.(type) {
+		case LabelStatement:
+			i.labels[s.Name] = s.Position
+		}
+	}
+	return nil
+}
+
 func (i *interpreter) evaluateStatement(statement Node) error {
 
 	switch s := statement.(type) {
@@ -470,15 +496,31 @@ func (i *interpreter) evaluateStatement(statement Node) error {
 		return i.interpretRead(s)
 	case EndStatement:
 		return io.EOF
+	case LabelStatement:
+		return nil
+	case GotoStatement:
+		return i.interpretGoto(s)
 	}
 	return nil
 }
 
 func (i *interpreter) Execute(statements []Node) error {
-	for _, statement := range statements {
+
+	if err := i.findLabels(statements); err != nil {
+		return err
+	}
+
+	for ip := 0; ip < len(statements); ip++ {
+		statement := statements[ip]
 		err := i.evaluateStatement(statement)
 		if err != nil {
 			return err
+		}
+
+		if i.jump {
+			i.jump = false
+			ip = i.jumpTo
+			continue // avoid adding 1 to the instruciton pointer
 		}
 	}
 

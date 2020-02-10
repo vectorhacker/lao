@@ -190,3 +190,22 @@ type EndStatement struct {
 func (r EndStatement) Tokens() []Token {
 	return r.tokens
 }
+
+type LabelStatement struct {
+	tokens   []Token
+	Name     string
+	Position int
+}
+
+func (r LabelStatement) Tokens() []Token {
+	return r.tokens
+}
+
+type GotoStatement struct {
+	tokens []Token
+	Label  string
+}
+
+func (r GotoStatement) Tokens() []Token {
+	return r.tokens
+}

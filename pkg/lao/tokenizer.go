@@ -24,6 +24,7 @@ const (
 	KindRelationalOperator
 	KindString
 	KindAssignment
+	KindLabel
 	KindEnd
 )
 
@@ -139,7 +140,7 @@ func (t *tokenizer) recognizeString() {
 func isKeyword(s string) bool {
 
 	switch s {
-	case "print", "rem", "if", "read", "then", "end":
+	case "print", "rem", "if", "read", "then", "end", "goto":
 		return true
 	}
 
@@ -155,7 +156,7 @@ func (t *tokenizer) recognizeKeywordsAndIdentifier() {
 	for pos < t.buf.Len() {
 		ch := t.buf.Bytes()[pos]
 
-		if !unicode.IsLetter(rune(ch)) && !unicode.IsNumber(rune(ch)) {
+		if !unicode.IsLetter(rune(ch)) && !unicode.IsNumber(rune(ch)) && ch != ':' {
 			break
 		}
 
@@ -171,8 +172,14 @@ func (t *tokenizer) recognizeKeywordsAndIdentifier() {
 			Column: column,
 			Value:  identifier,
 		}
+	} else if identifier[len(identifier)-1] == ':' {
+		t.ct = Token{
+			Kind:   KindLabel,
+			Line:   t.line,
+			Column: column,
+			Value:  identifier,
+		}
 	} else {
-
 		t.ct = Token{
 			Kind:   KindIdentifier,
 			Line:   t.line,

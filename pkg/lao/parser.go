@@ -24,7 +24,7 @@ func (p parser) Parse() ([]Node, error) {
 
 	for {
 		switch p.tokenizer.Current().Kind {
-		case KindIdentifier, KindKeyword:
+		case KindIdentifier, KindKeyword, KindLabel:
 			node, err := p.parseStatement()
 			if err != nil {
 				return nodes, err
@@ -45,9 +45,23 @@ func (p parser) parseStatement() (Node, error) {
 		return p.parseAssignmentStatement()
 	case KindKeyword:
 		return p.parseKeywordStatement()
+	case KindLabel:
+		return p.parseLabelStatement()
 	}
 
 	return nil, fmt.Errorf("unable to parse statement")
+}
+
+func (p parser) parseLabelStatement() (Node, error) {
+	current := p.tokenizer.Current()
+
+	p.tokenizer.Next()
+
+	return LabelStatement{
+		tokens:   []Token{current},
+		Name:     current.Value[:len(current.Value)-1],
+		Position: current.Line,
+	}, nil
 }
 
 func (p parser) parseAssignmentStatement() (Node, error) {
@@ -178,8 +192,26 @@ func (p parser) parseKeywordStatement() (Node, error) {
 		return p.parseRemStatement()
 	case "end":
 		return p.parseEndStatement()
+	case "goto":
+		return p.parseGotoStatement()
 	}
 	return nil, nil
+}
+
+func (p parser) parseGotoStatement() (Node, error) {
+	current := p.tokenizer.Current()
+	p.tokenizer.Next() // Eat goto
+	next := p.tokenizer.Current()
+
+	if next.Kind != KindIdentifier || current.Line != next.Line {
+		return nil, fmt.Errorf("Invalid goto statement at line %d column %d", next.Line, next.Column)
+	}
+	p.tokenizer.Next()
+
+	return GotoStatement{
+		Label:  next.Value,
+		tokens: []Token{current, next},
+	}, nil
 }
 
 func (p parser) getBinaryOperator() BinaryOperator {
