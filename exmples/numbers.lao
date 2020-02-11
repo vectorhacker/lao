@@ -1,0 +1,6 @@
+gpi = 3.1415
+ge = 2.71828
+gmoney = 1.25e2.54
+print gpi
+print ge
+print gmoney

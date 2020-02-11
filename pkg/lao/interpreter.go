@@ -3,6 +3,7 @@ package lao
 import (
 	"fmt"
 	"io"
+	"math"
 	"strconv"
 	"strings"
 )
@@ -154,12 +155,23 @@ func (i *interpreter) evalauteArithmeticExpression(
 	case IntegerNumber:
 		return strconv.Atoi(e.Value)
 	case RealNumber:
-		return strconv.ParseFloat(e.Value, 64)
+		return parseRealNumber(e.Value)
 	case String:
 		return strings.ReplaceAll(e.Value, "\"", ""), nil
 	}
 
 	return nil, nil
+}
+
+func parseRealNumber(value string) (float64, error) {
+	if strings.Contains(strings.ToLower(value), "e") {
+		parts := strings.Split(strings.ToLower(value), "e")
+		base, _ := strconv.ParseFloat(parts[0], 64)
+		pow, _ := strconv.ParseFloat(parts[1], 64)
+		return math.Pow(base, pow), nil
+	}
+
+	return strconv.ParseFloat(value, 64)
 }
 
 func (i *interpreter) interpretAssignment(a AssignmentStatement) error {
@@ -378,7 +390,7 @@ func (i *interpreter) evaluateExpression(expr interface{}) (interface{}, error) 
 	case IntegerNumber:
 		return strconv.Atoi(e.Value)
 	case RealNumber:
-		return strconv.ParseFloat(e.Value, 64)
+		return parseRealNumber(e.Value)
 	case String:
 		return strings.ReplaceAll(e.Value, "\"", ""), nil
 	}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"log"
 	"os"
 
 	"github.com/vectorhacker/lao/pkg/lao"
@@ -47,9 +48,7 @@ func main() {
 	err = interpreter.Execute(statements)
 	if err != nil {
 		if err != io.EOF {
-			panic(err)
-
+			log.Fatal(err)
 		}
-		os.Exit(0)
 	}
 }

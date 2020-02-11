@@ -1,6 +1,6 @@
-c = -100
+c = 1
 loop:
-if c .gt. 100 then goto final
+if c .gt. 10 then goto final
 print c
 c = c .add. 1
 goto loop

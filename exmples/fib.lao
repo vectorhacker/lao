@@ -1,0 +1,15 @@
+c1=0
+c2=1
+a = 0
+print "Enter the number of Fibonacci numbers to calculate:"
+read cn
+loop:
+if a .eq. cn then goto finish
+a = a .add. 1
+print c2
+ctemp = c2
+c2 = c1 .add. c2
+c1 = ctemp
+goto loop
+finish:
+end.
