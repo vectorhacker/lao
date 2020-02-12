@@ -192,9 +192,8 @@ func (r EndStatement) Tokens() []Token {
 }
 
 type LabelStatement struct {
-	tokens   []Token
-	Name     string
-	Position int
+	tokens []Token
+	Name   string
 }
 
 func (r LabelStatement) Tokens() []Token {

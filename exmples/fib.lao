@@ -1,15 +1,17 @@
-c1=0
-c2=1
+rem setup
+n1=0.0
+n2=1.0
 a = 0
-print "Enter the number of Fibonacci numbers to calculate:"
-read cn
+cn = 1900
+
 loop:
 if a .eq. cn then goto finish
 a = a .add. 1
-print c2
-ctemp = c2
-c2 = c1 .add. c2
-c1 = ctemp
+print n2
+ntemp = n2
+n2 = n1 .add. n2
+n1 = ntemp
 goto loop
+
 finish:
 end.

@@ -457,7 +457,7 @@ func (i *interpreter) interpretRead(read ReadStatement) error {
 		i.symbols[read.Variable.Name] = temp
 	case VariableReal:
 		var temp float64
-		if _, err := fmt.Scanf("%.6f\n", &temp); err != nil {
+		if _, err := fmt.Scanf("%f\n", &temp); err != nil {
 			return err
 		}
 		i.symbols[read.Variable.Name] = temp
@@ -479,16 +479,16 @@ func (i *interpreter) interpretGoto(gotostatement GotoStatement) error {
 	if !ok {
 		return fmt.Errorf("Unable to to goto label %s doesn't exist", gotostatement.Label)
 	}
-	i.jumpTo = address - 1
+	i.jumpTo = address
 
 	return nil
 }
 
 func (i *interpreter) findLabels(statements []Node) error {
-	for _, statement := range statements {
+	for address, statement := range statements {
 		switch s := statement.(type) {
 		case LabelStatement:
-			i.labels[s.Name] = s.Position
+			i.labels[s.Name] = address
 		}
 	}
 	return nil

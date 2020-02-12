@@ -58,9 +58,8 @@ func (p parser) parseLabelStatement() (Node, error) {
 	p.tokenizer.Next()
 
 	return LabelStatement{
-		tokens:   []Token{current},
-		Name:     current.Value[:len(current.Value)-1],
-		Position: current.Line,
+		tokens: []Token{current},
+		Name:   current.Value[:len(current.Value)-1],
 	}, nil
 }
 

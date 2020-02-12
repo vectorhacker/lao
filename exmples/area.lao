@@ -1,0 +1,35 @@
+rem constants
+gpi = 3.1415
+print "program to calculate measures of a circle"
+print
+
+loop:
+print "enter the radius of the circle"
+read gr
+
+choose:
+print "Calculate:"
+print "1-area"
+print "2-circumference"
+print "3-exit"
+read c
+if c .eq. 1 then goto area
+if c .eq. 2 then goto circumference
+if c .eq. 3 then goto finish
+goto choose
+
+
+finish:
+end.
+
+area:
+garea = gpi .mul. gr .mul. gr
+print "area = "
+print garea
+goto choose
+
+circumference:
+gcirc = gpi .mul. 2 .mul. gr
+print "circumference = "
+print gcirc
+goto choose
