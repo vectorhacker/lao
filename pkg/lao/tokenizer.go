@@ -80,11 +80,7 @@ func (t *tokenizer) Next() bool {
 		t.recognizeKeywordsAndIdentifier()
 	}
 
-	if unicode.IsDigit(rune(ch)) {
-		t.recognizeNumber()
-	}
-
-	if ch == '-' || ch == '+' {
+	if unicode.IsDigit(rune(ch)) || ch == '-' || ch == '+' {
 		t.recognizeNumber()
 	}
 
@@ -279,13 +275,9 @@ func (t *tokenizer) recognizeNumber() {
 			if ch == '+' || ch == '-' {
 				return beginSignedNumber
 			}
-		case signedNumber:
-			if unicode.IsDigit(rune(ch)) {
-				return integer
-			}
 		case beginSignedNumber:
 			if unicode.IsDigit(rune(ch)) {
-				return signedNumber
+				return integer
 			}
 		case integer:
 			if unicode.IsDigit(rune(ch)) {

@@ -1,0 +1,6 @@
+PRINT "Entre un numero entero: "
+READ G
+IF G .GT. 0 THEN PRINT "Out of range"
+IF G .GT. -5 .AND. G .LT. 0 THEN PRINT "Yes"
+PRINT
+END.

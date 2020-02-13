@@ -427,18 +427,18 @@ func (i *interpreter) interpretPrint(print PrintStatement) error {
 
 		switch a.Type {
 		case VariableInteger:
-			fmt.Fprintf(i.out, "%d\n", v)
+			fmt.Fprintf(i.out, "%d", v)
 		case VariableString:
-			fmt.Fprintf(i.out, "%s\n", v)
+			fmt.Fprintf(i.out, "%s", v)
 		case VariableReal:
-			fmt.Fprintf(i.out, "%.6f\n", v)
+			fmt.Fprintf(i.out, "%.6f", v)
 		}
 	case String:
-		fmt.Fprintln(i.out, strings.ReplaceAll(a.Value, "\"", ""))
+		fmt.Fprint(i.out, strings.ReplaceAll(a.Value, "\"", ""))
 	case IntegerNumber:
-		fmt.Fprintln(i.out, a.Value)
+		fmt.Fprint(i.out, a.Value)
 	case RealNumber:
-		fmt.Fprintln(i.out, a.Value)
+		fmt.Fprint(i.out, a.Value)
 	default:
 		fmt.Fprintln(i.out)
 	}

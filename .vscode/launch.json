@@ -10,7 +10,7 @@
             "request": "launch",
             "mode": "debug",
             "program": "${workspaceFolder}/cmd/lao",
-            "args": ["${workspaceFolder}/examples/loop.lao"]
+            "args": ["${workspaceFolder}/exmples/program6.lao"]
         }
     
     ]

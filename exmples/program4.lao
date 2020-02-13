@@ -1,0 +1,13 @@
+PRINT "Entre un numero entero: "
+READ A
+PRINT "Entre otro numero entero: "
+READ B
+C = A .add. B
+D = A .sub. B
+PRINT "Suma: "
+PRINT C
+PRINT
+PRINT "Resta: "
+PRINT D
+PRINT 
+END.

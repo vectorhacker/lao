@@ -1,0 +1,6 @@
+PRINT "Entre un numero entero: "
+READ A 
+IF A .GT. 0 THEN PRINT "Positivo"
+IF A .LT. 0 THEN PRINT "Negativo"
+PRINT
+END.

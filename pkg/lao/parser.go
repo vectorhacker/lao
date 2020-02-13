@@ -266,11 +266,13 @@ func (p parser) parseAtom(line int) (Node, error) {
 		return p.parseString()
 	case KindIdentifier:
 		return p.parseVariable()
+	case KindLogicalOperator:
+		return p.parseExpresion()
 	}
 	return nil, fmt.Errorf("unxpected token %s at line: %d column: %d", current.Value, current.Line, current.Column)
 }
 
-func (p parser) parseExpresion(
+func (p parser) makeBinary(
 	left Node,
 	prec int,
 ) (Node, error) {
@@ -281,13 +283,13 @@ func (p parser) parseExpresion(
 		operator := p.getBinaryOperator()
 		nextPrec := precedence[operator]
 
-		p.tokenizer.Next()
 		if nextPrec > prec {
+			p.tokenizer.Next()
 			atom, err := p.parseAtom(current.Line)
 			if err != nil {
 				return nil, err
 			}
-			right, err := p.parseExpresion(atom, nextPrec)
+			right, err := p.makeBinary(atom, nextPrec)
 			if err != nil {
 				return nil, err
 			}
@@ -298,7 +300,7 @@ func (p parser) parseExpresion(
 			}
 
 			// left to right logic
-			return p.parseExpresion(ConditionalExpression{
+			return p.makeBinary(ConditionalExpression{
 				Left:     left,
 				Right:    right,
 				Operator: operator,
@@ -310,19 +312,17 @@ func (p parser) parseExpresion(
 
 		}
 
-	} else if current.Kind == KindIdentifier ||
-		current.Kind == KindInteger ||
-		current.Kind == KindReal ||
-		current.Kind == KindString {
-		atom, err := p.parseAtom(current.Line)
-		if err != nil {
-			return nil, err
-		}
-
-		return p.parseExpresion(atom, prec)
 	}
-
 	return left, nil
+}
+
+func (p parser) parseExpresion() (Node, error) {
+	current := p.tokenizer.Current()
+	atom, err := p.parseAtom(current.Line)
+	if err != nil {
+		return nil, err
+	}
+	return p.makeBinary(atom, 0)
 }
 
 func run(steps ...func() error) error {
@@ -349,7 +349,7 @@ func (p parser) parseIfStatement() (Node, error) {
 	err := run(func() error {
 		var err error
 		p.tokenizer.Next() // Eat  token
-		condition, err = p.parseExpresion(nil, 0)
+		condition, err = p.parseExpresion()
 		return err
 	}, func() error {
 

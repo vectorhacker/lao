@@ -1,0 +1,20 @@
+print "enter circle radius"
+read cradius
+
+push cradius
+call calculatearea
+pop carea
+
+print "area = "
+print carea
+
+end.
+
+rem functions should be defined after inital code
+calculatearea:
+pop gradius
+
+garea = gradius .mul. gradius .mul. 3.1415
+
+push garea
+return

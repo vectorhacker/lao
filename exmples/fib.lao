@@ -1,16 +1,17 @@
 rem setup
-n1=0.0
-n2=1.0
+c1=0
+c2=1
 a = 0
-cn = 1900
+print "How many to calculate?"
+read cn
 
 loop:
 if a .eq. cn then goto finish
 a = a .add. 1
-print n2
-ntemp = n2
-n2 = n1 .add. n2
-n1 = ntemp
+print c2
+ctemp = c2
+c2 = c1 .add. c2
+c1 = ctemp
 goto loop
 
 finish:

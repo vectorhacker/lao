@@ -5,7 +5,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/vectorhacker/lao/pkg/lao"
 )
 
@@ -66,7 +65,6 @@ func main() {
 
 				return s
 			}(), " "))
-			spew.Dump(statement)
 		}
 	}
 	if err != nil {

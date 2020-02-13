@@ -1,0 +1,6 @@
+PRINT "Entre un numero entero: "
+READ A
+PRINT "El número entero fue: "
+PRINT A
+PRINT
+END.

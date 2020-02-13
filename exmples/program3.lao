@@ -1,0 +1,9 @@
+PRINT "Entre un numero entero"
+READ A
+PRINT "El numero cuadrado de "
+PRINT A
+PRINT " es "
+B = A .MUL. A
+PRINT B
+PRINT
+END.
